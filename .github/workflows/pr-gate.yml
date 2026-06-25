@@ -10,3 +10,8 @@ jobs:
   pr-gate:
     uses: Mahesh-Binayak/kattu/.github/workflows/pr-gate.yml@esignet-343
     secrets: inherit
+    with:
+      # Trivy findings are posted as a PR comment. `full` lists all current HIGH/CRITICAL
+      # on every PR (self-converges to diff-only as the backlog is fixed). Switch to `diff`
+      # once the backlog is clear to comment only vulns the PR newly introduces.
+      trivy_comment_mode: full
