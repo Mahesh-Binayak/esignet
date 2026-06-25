@@ -1,0 +1,12 @@
+name: PR Gate
+on:
+  pull_request:
+    branches: [ master, main, develop, release-*, eSignet-343-testing-PR-gates ]
+permissions:
+  contents: read
+  security-events: write
+  pull-requests: write
+jobs:
+  pr-gate:
+    uses: mosip/kattu/.github/workflows/pr-gate.yml@mahesh-patch-2
+    secrets: inherit
