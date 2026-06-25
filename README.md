@@ -60,3 +60,5 @@ API documentation is available [here](docs/esignet-openapi.yaml).
 eSignet documentation is available [here](https://docs.esignet.io/).
 ## License
 This project is licensed under the terms of [Mozilla Public License 2.0](LICENSE).
+
+<!-- PR Gate demo v2 (PASS): trivial change to trigger the gate. -->
