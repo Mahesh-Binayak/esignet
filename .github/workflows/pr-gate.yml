@@ -8,5 +8,5 @@ permissions:
   pull-requests: write
 jobs:
   pr-gate:
-    uses: mosip/kattu/.github/workflows/pr-gate.yml@mahesh-patch-2
+    uses: Mahesh-Binayak/kattu/.github/workflows/pr-gate.yml@esignet-343
     secrets: inherit
