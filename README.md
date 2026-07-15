@@ -37,3 +37,5 @@ Each subproject is independently built and tested; see its own README (linked ab
 ## License
 
 Mozilla Public License 2.0 — see [LICENSE](LICENSE).
+
+<!-- PR-gate test: trivial change to trigger the gate on develop-go. -->
