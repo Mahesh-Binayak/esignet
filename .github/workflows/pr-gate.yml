@@ -11,13 +11,18 @@ jobs:
     uses: Mahesh-Binayak/kattu/.github/workflows/pr-gate.yml@esignet-343
     secrets: inherit
     with:
-      # Explicit service locations for coverage jobs. esignet structure:
-      # Java: pom.xml at root (.)
-      # Go: go.mod at esignet-service/
-      # npm: package.json at oidc-ui/
-      JAVA_SERVICE_LOCATION: .
+      # SERVICE_LOCATION is the fallback for any *_SERVICE_LOCATION left unset.
+      # Java pom.xml is at root, so this alone covers Java.
+      SERVICE_LOCATION: '.'
+      # Go/npm are NOT at root — must override explicitly or they silently
+      # fall back to SERVICE_LOCATION and detection breaks (verified in PR #11).
       GO_SERVICE_LOCATION: esignet-service
       NPM_SERVICE_LOCATION: oidc-ui
+      # oidc-ui runs Vitest, not Jest. NOTE: kattu@esignet-343 currently appends
+      # "--watchAll=false" unconditionally after this command (pr-gate.yml line 484),
+      # which vitest rejects — this override will still fail until that's fixed
+      # on the kattu side to only append the flag for the default Jest command.
+      NPM_COVERAGE_COMMAND: 'npx vitest run --coverage'
       # Trivy findings are posted as a PR comment. `full` lists all current HIGH/CRITICAL
       # on every PR (self-converges to diff-only as the backlog is fixed). Switch to `diff`
       # once the backlog is clear to comment only vulns the PR newly introduces.
