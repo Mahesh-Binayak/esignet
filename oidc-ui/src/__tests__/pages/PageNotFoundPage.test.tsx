@@ -5,7 +5,7 @@ import PageNotFoundPage from '../../pages/PageNotFoundPage';
 describe('PageNotFoundPage', () => {
   it('renders the under construction image', () => {
     render(<PageNotFoundPage />);
-    expect(screen.getByAltText('page_not_found')).toBeDefined();
+    expect(screen.getByAltText('Page not found')).toBeDefined();
   });
 
   it('renders the page not found heading', () => {
