@@ -22,7 +22,12 @@ fi
 
 NS=esignet
 ESIGNET_SERVICE_NAME=esignet
-CHART_VERSION=1.3.0-beta.2-develop
+# The partner-onboarder chart is used from the local mosip-onboarding repo (moupdate branch)
+# because the propertiesOverride feature used in values.yaml is not yet published in the
+# upstream mosip/partner-onboarder Helm registry. Set ONBOARDER_CHART_DIR to the path of
+# helm/partner-onboarder in your local mosip-onboarding checkout; the default assumes it
+# lives at claudeoncloud/onnnboard/mosip-onboarding/helm/partner-onboarder.
+ONBOARDER_CHART_DIR="${ONBOARDER_CHART_DIR:-$(cd "$(dirname "$0")/../../../onnnboard/mosip-onboarding/helm/partner-onboarder" && pwd)}"
 
 echo Create $NS namespace
 kubectl create ns $NS || true
@@ -158,8 +163,11 @@ function installing_onboarder() {
    kubectl label ns $NS istio-injection=disabled --overwrite
    helm repo update
 
+    echo "Resolving chart dependencies..."
+    helm dependency update "$ONBOARDER_CHART_DIR"
+
     echo "Onboarding Esignet MISIP partner client"
-    helm -n $NS install esignet-misp-onboarder mosip/partner-onboarder \
+    helm -n $NS install esignet-misp-onboarder "$ONBOARDER_CHART_DIR" \
       $NFS_OPTION \
       $S3_OPTION \
       --set onboarding.variables.push_reports_to_s3=$push_reports_to_s3 \
@@ -167,7 +175,6 @@ function installing_onboarder() {
       $ENABLE_INSECURE \
       -f values.yaml \
       $KEYCLOAK_ARGS \
-      --version $CHART_VERSION \
       --wait --wait-for-jobs
     echo "Partner onboarder executed and reports are moved to S3 or NFS please check the same to make sure partner was onboarded sucessfully."
     kubectl rollout restart deployment $ESIGNET_SERVICE_NAME -n $NS
