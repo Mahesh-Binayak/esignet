@@ -189,8 +189,12 @@ function installing_onboarder() {
       $KEYCLOAK_ARGS \
       --wait --wait-for-jobs
     echo "Partner onboarder executed and reports are moved to S3 or NFS please check the same to make sure partner was onboarded sucessfully."
-    kubectl rollout restart deployment $ESIGNET_SERVICE_NAME -n $NS
-    echo eSignet MISP License Key updated successfully to eSignet.
+    if [ "$sync_live" = "y" ] || [ "$sync_live" = "Y" ]; then
+      kubectl rollout restart deployment $ESIGNET_SERVICE_NAME -n $NS
+      echo eSignet MISP License Key updated successfully to eSignet.
+    else
+      echo "Skipped restarting $ESIGNET_SERVICE_NAME - live deployment sync was declined above."
+    fi
     return 0
   fi
 }
