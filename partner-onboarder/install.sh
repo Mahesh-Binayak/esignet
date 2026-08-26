@@ -20,6 +20,17 @@ if [ "$flag" = "n" ]; then
   ENABLE_INSECURE='--set onboarding.configmaps.onboarding.ENABLE_INSECURE=true';
 fi
 
+echo "Update existing live deployment with this run's onboarding result?"
+echo "(patches/creates the secret esignet reads for the MISP license key, no effect"
+echo "beyond that for this module) - leave blank to skip, e.g. for a one-off/local/"
+echo "test onboard that shouldn't touch anything already running."
+read -p "Update existing values? (y/N): " sync_live
+if [ "$sync_live" = "y" ] || [ "$sync_live" = "Y" ]; then
+  SYNC_LIVE_DEPLOYMENT_OPTION='--set onboarding.propertiesOverride.esignet.SYNC_LIVE_DEPLOYMENT=true'
+else
+  SYNC_LIVE_DEPLOYMENT_OPTION='--set onboarding.propertiesOverride.esignet.SYNC_LIVE_DEPLOYMENT=false'
+fi
+
 NS=esignet
 ESIGNET_SERVICE_NAME=esignet
 # The partner-onboarder chart is used from the local mosip-onboarding repo (moupdate branch)
@@ -173,6 +184,7 @@ function installing_onboarder() {
       --set onboarding.variables.push_reports_to_s3=$push_reports_to_s3 \
       --set onboarding.configmaps.onboarder-namespace.ns_esignet="$NS" \
       $ENABLE_INSECURE \
+      $SYNC_LIVE_DEPLOYMENT_OPTION \
       -f values.yaml \
       $KEYCLOAK_ARGS \
       --wait --wait-for-jobs
