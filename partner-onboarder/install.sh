@@ -195,6 +195,12 @@ function installing_onboarder() {
     else
       echo "Skipped restarting $ESIGNET_SERVICE_NAME - live deployment sync was declined above."
     fi
+
+    # propertiesOverride renders into a ConfigMap (plaintext) - if any secret ended up in
+    # there anyway (it shouldn't, but defense in depth), delete it now that the Job has
+    # finished reading it. Doesn't touch values.yaml or Helm's own release-history storage -
+    # only closes the in-cluster ConfigMap exposure window.
+    kubectl -n "$NS" get configmap -o name | grep -- "-properties-esignet-misp-onboarder$" | xargs -r -n1 kubectl -n "$NS" delete --ignore-not-found=true
     return 0
   fi
 }
